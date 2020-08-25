@@ -1,0 +1,21 @@
+{
+    "name": "algorithm-probs",
+    "version": "1.0.0",
+    "description": "Projeto que reúne questões de lógica de programação e suas respectivas tentativas de solução",
+    "main": "app.js",
+    "scripts": {
+        "start": "lite-server",
+        "build": "tsc",
+        "watch": "tsc -w",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Icaro de Barros",
+    "license": "ISC",
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^3.7.1",
+        "@typescript-eslint/parser": "^3.7.1",
+        "eslint": "^7.5.0",
+        "lite-server": "^2.5.4",
+        "typescript": "^4.0.2"
+    }
+}

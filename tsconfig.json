@@ -1,0 +1,24 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "declaration": true,
+        "importHelpers": true,
+        // "lib": [
+        //     "es2018",
+        //     "dom"
+        // ],
+        // "module": "ES6",
+        "moduleResolution": "node",
+        "noImplicitAny": false,
+        "sourceMap": false,
+        "target": "ES6",
+        "outDir": "dist"
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist/**/*"
+    ]
+}
