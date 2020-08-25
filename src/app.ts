@@ -1,3 +1,5 @@
 import { print } from './print.js';
 
-print('Hello world!');
+import main from './project-euler/001.js';
+
+print('Result: ' + main());
