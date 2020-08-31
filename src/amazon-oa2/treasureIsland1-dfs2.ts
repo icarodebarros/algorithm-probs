@@ -43,60 +43,60 @@ interface Coordinate {
     y: number;
 }
 
-function treasureIsland1(area: string[][]): string { // busca em profundidade (DFS) sem recursividade
-    const startPosition: Coordinate = {x: 0, y: 0};
-    
-    const visitedPositions = new Map<string, number>();
-    const stepsToVisit = new Map<string, number>();
-    
-    const stack: Coordinate[] = [];
-    
-    stack.push(startPosition);
-    stepsToVisit.set(startPosition.x+''+startPosition.y, 0);
+function treasureIsland1(area: string[][]): string { // busca (2.0) em profundidade (DFS) com recursividade
+    const currentPosition: Coordinate = {x: 0, y: 0};
 
-    while(stack.length) {
-        const element = stack.pop();
-        const x = element.x;
-        const y = element.y;
-        const steps = stepsToVisit.get(x+''+y);
-        console.log('current:', element);
-        console.log('steps:', steps);
+    const steps = { value: area.length * area[0].length };
+    const visitedPositions = new Map<string, boolean>();
 
-        if (visitedPositions.get(x+''+y) === undefined) {
-            if (area[x][y] === 'X') return `The minimum route takes ${steps} steps.`;
-            visitedPositions.set(x+''+y, steps);
-        }
+    sail(area, currentPosition, visitedPositions, steps, 0);
 
-        const possibleMoves: Coordinate[] = [];
-        const potentialMoves: Coordinate[] = [
-            { x, y: y + 1 }, // right
-            { x: x + 1, y }, // down
-            { x, y: y-1 }, // left
-            { x: x - 1, y }, // up
-        ];
-        
-        for(const potMove of potentialMoves) {
-            if (isPossiblePosition(area, potMove, visitedPositions)) possibleMoves.push(potMove);
-        }
-        console.log('Possible moves:', possibleMoves);
-
-        for(let i=0; i<possibleMoves.length; i++) {
-            stack.push(possibleMoves[i]);
-            stepsToVisit.set(possibleMoves[i].x+''+possibleMoves[i].y, steps + 1);
-        }
-    }
-    
-    return null;
+    return `The minimum route takes ${steps.value} steps.`;
 }
 
-function isPossiblePosition(area: string[][], position: Coordinate, visitedPositions: Map<string, number>): boolean {
+function sail(area: string[][], currentPosition: Coordinate, visitedPositions: Map<string, boolean>,
+        steps: { value: number}, currentStep: number) {
+
+    console.log('Iteração', currentPosition, visitedPositions, steps, currentStep);
+    
+    const x = currentPosition.x;
+    const y = currentPosition.y;
+    
+    if (area[x][y] === 'X') {
+        if (currentStep < steps.value) {
+            steps.value = currentStep;
+        }
+    } else {
+        visitedPositions.set(x+''+y, true);   
+    }        
+    
+    const possibleMoves: Coordinate[] = [];
+    const potentialMoves: Coordinate[] = [
+        { x, y: y-1 }, // left
+        { x, y: y + 1 }, // right
+        { x: x + 1, y }, // down
+        { x: x - 1, y }, // up
+    ];
+    
+    for(const potMove of potentialMoves) {
+        if (isPossiblePosition(area, potMove, visitedPositions)) possibleMoves.push(potMove);
+    }
+    console.log('Possible moves:', possibleMoves);
+
+    const copyVisitedPositions = new Map<string, boolean>(visitedPositions);
+    for(const possibleMove of possibleMoves) {
+        sail(area, possibleMove, copyVisitedPositions, steps, currentStep + 1);
+    }
+}
+
+function isPossiblePosition(area: string[][], position: Coordinate, visitedPositions: Map<string, boolean>): boolean {
     // out of the map
     if (position.x < 0 || position.x >= area[0].length ||
         position.y < 0 || position.y >= area.length) {
             return false;
     }
-    // verify pass positions
-    if (visitedPositions.get(position.x +''+ position.y) !== undefined) {
+    // verify visited positions
+    if (visitedPositions.get(position.x +''+ position.y)) {
         return false;
     }
     // verify position content

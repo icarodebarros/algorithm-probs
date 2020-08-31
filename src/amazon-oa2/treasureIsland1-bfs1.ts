@@ -19,6 +19,7 @@ Input
 Output from aonecode.com
 Route is (0, 0), (0, 1), (1, 1), (2, 1), (2, 0), (3, 0) The minimum route takes 5 steps.
  */
+
 function main(): string {
     const area = [
         ['O', 'O', 'O', 'O'],
@@ -42,58 +43,60 @@ interface Coordinate {
     y: number;
 }
 
-function treasureIsland1(area: string[][]): string { // busca (1.0) em profundidade (DFS) com recursividade
-    const currentPosition: Coordinate = {x: 0, y: 0};
+function treasureIsland1(area: string[][]): string { // busca em largura (BFS)
+    const startPosition: Coordinate = {x: 0, y: 0};
+    
+    const visitedPositions = new Map<string, boolean>();
+    const steps = new Map<string, number>();
 
-    const visitedPositions = new Map<string, number>();
+    const queue: Coordinate[] = [];
+    
+    queue.push(startPosition);
+    steps.set(startPosition.x+''+startPosition.y, 0);
 
-    const steps = sail(area, currentPosition, visitedPositions, 0);
+    while(queue.length) {
+        const element = queue.shift();
+        const x = element.x;
+        const y = element.y;
+        const stp = steps.get(x+''+y);
+        console.log('current:', element);
+        console.log('steps:', stp);
 
-    return `The minimum route takes ${steps} steps.`;
-}
+        if (!visitedPositions.get(x+''+y)) {
+            if (area[x][y] === 'X') return `The minimum route takes ${stp} steps.`;
+            visitedPositions.set(x+''+y, true);
+        }
 
-function sail(area: string[][], currentPosition: Coordinate, visitedPositions: Map<string, number>, steps: number): number {
-    console.log('Iteração', currentPosition, visitedPositions, steps);
-    const x = currentPosition.x;
-    const y = currentPosition.y;
-    if (area[x][y] === 'X') return steps;
+        const possibleMoves: Coordinate[] = [];
+        const potentialMoves: Coordinate[] = [
+            { x, y: y + 1 }, // right
+            { x: x + 1, y }, // down
+            { x, y: y - 1 }, // left
+            { x: x - 1, y }, // up
+        ];
         
-    visitedPositions.set(x+''+y, steps);
-    
-    const possibleMoves: Coordinate[] = [];
-    const potentialMoves: Coordinate[] = [
-        { x, y: y-1 }, // left
-        { x, y: y + 1 }, // right
-        { x: x + 1, y }, // down
-        { x: x - 1, y }, // up
-    ];
-    
-    for(const potMove of potentialMoves) {
-        if (isPossiblePosition(area, potMove, visitedPositions)) possibleMoves.push(potMove);
+        for(const potMove of potentialMoves) {
+            if (isPossiblePosition(area, potMove, visitedPositions)) possibleMoves.push(potMove);
+        }
+        console.log('Possible moves:', possibleMoves);
+
+        for(let i=0; i<possibleMoves.length; i++) {
+            queue.push(possibleMoves[i]);
+            steps.set(possibleMoves[i].x+''+possibleMoves[i].y, stp + 1);
+        }
     }
-    console.log('Possible moves:', possibleMoves);
-
-    if (possibleMoves.length === 0) return null;
-
-    const copyVisitedPositions = new Map<string, number>(visitedPositions);
-    const possibilities = possibleMoves.map((move: Coordinate) => sail(area, move, copyVisitedPositions, steps + 1));
     
-    console.log('possibilities', possibilities);
-
-    return possibilities.reduce((acc: number, current: number) => {
-        if (!acc) return current;
-        return current && current < acc ? current : acc;
-    }, null);
+    return null;
 }
 
-function isPossiblePosition(area: string[][], position: Coordinate, visitedPositions: Map<string, number>): boolean {
+function isPossiblePosition(area: string[][], position: Coordinate, visitedPositions: Map<string, boolean>): boolean {
     // out of the map
     if (position.x < 0 || position.x >= area[0].length ||
         position.y < 0 || position.y >= area.length) {
             return false;
     }
-    // verify pass positions
-    if (visitedPositions.get(position.x +''+ position.y) !== undefined) {
+    // verify visited positions
+    if (visitedPositions.get(position.x +''+ position.y)) {
         return false;
     }
     // verify position content
