@@ -54,8 +54,8 @@ function treasureIsland1(area: string[][]): string { // busca (2.0) em profundid
     return `The minimum route takes ${steps.value} steps.`;
 }
 
-function sail(area: string[][], currentPosition: Coordinate, visitedPositions: Map<string, boolean>,
-        steps: { value: number}, currentStep: number) {
+export function sail(area: string[][], currentPosition: Coordinate, visitedPositions: Map<string, boolean>,
+        steps: { value: number}, currentStep: number): void {
 
     console.log('Iteração', currentPosition, visitedPositions, steps, currentStep);
     
@@ -68,25 +68,25 @@ function sail(area: string[][], currentPosition: Coordinate, visitedPositions: M
         }
     } else {
         visitedPositions.set(x+''+y, true);   
-    }        
     
-    const possibleMoves: Coordinate[] = [];
-    const potentialMoves: Coordinate[] = [
-        { x, y: y-1 }, // left
-        { x, y: y + 1 }, // right
-        { x: x + 1, y }, // down
-        { x: x - 1, y }, // up
-    ];
+        const possibleMoves: Coordinate[] = [];
+        const potentialMoves: Coordinate[] = [
+            { x, y: y - 1 }, // left
+            { x, y: y + 1 }, // right
+            { x: x + 1, y }, // down
+            { x: x - 1, y }, // up
+        ];
+        
+        for(const potMove of potentialMoves) {
+            if (isPossiblePosition(area, potMove, visitedPositions)) possibleMoves.push(potMove);
+        }
+        console.log('Possible moves:', possibleMoves);
     
-    for(const potMove of potentialMoves) {
-        if (isPossiblePosition(area, potMove, visitedPositions)) possibleMoves.push(potMove);
-    }
-    console.log('Possible moves:', possibleMoves);
-
-    const copyVisitedPositions = new Map<string, boolean>(visitedPositions);
-    for(const possibleMove of possibleMoves) {
-        sail(area, possibleMove, copyVisitedPositions, steps, currentStep + 1);
-    }
+        const copyVisitedPositions = new Map<string, boolean>(visitedPositions);
+        for(const possibleMove of possibleMoves) {
+            sail(area, possibleMove, copyVisitedPositions, steps, currentStep + 1);
+        }
+    }           
 }
 
 function isPossiblePosition(area: string[][], position: Coordinate, visitedPositions: Map<string, boolean>): boolean {
@@ -100,7 +100,7 @@ function isPossiblePosition(area: string[][], position: Coordinate, visitedPosit
         return false;
     }
     // verify position content
-    if (area[position.x][position.y] === 'D') {
+    if (area[position.x][position.y] === 'D' || area[position.x][position.y] === 'S') {
         return false;
     }
 
