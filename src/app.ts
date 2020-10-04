@@ -11,7 +11,8 @@ import { print } from './print.js';
 // import main from './amazon-oa2/minCostConnectNodes.js';
 // import main from './amazon-oa2/cellStateAfterNDays-s1.js';
 // import main from './amazon-oa2/cellStateAfterNDays-s2.js';
-import main from './amazon-oa2/shopkeeperSale.js';
+// import main from './amazon-oa2/shopkeeperSale.js';
+import main from './amazon-oa2/favoriteGenres.js';
 
 // import main from './codechef/CENS20C.js';
 
